@@ -42,8 +42,3 @@ ssh_acl_hosts:
 
 # Gateway par défaut
 default_gateway: 192.168.40.1
-
-# SNMP Host
-snmp_host: 192.168.40.14
-snmp_community_ro: cynasnmp
-snmp_community_rw: cynasnmp

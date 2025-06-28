@@ -1,17 +1,11 @@
 ---
 - name: Configurer les switches Core pour LACP avec pfSense, Trunks et STP
-  hosts: geneve-core
+  hosts: geneve-core:paris-core
   gather_facts: no
   connection: network_cli
   vars:
     ansible_network_os: cisco.ios.ios
-    trunk_vlans: "10,20,30,40"
-    vlans:
-      - { id: 10, name: "Admin_Reseau" }
-      - { id: 20, name: "Utilisateurs" }
-      - { id: 30, name: "Clients-leger" }
-      - { id: 40, name: "Serveurs" }
-
+    
   tasks:
 
     - name: Créer les VLANs

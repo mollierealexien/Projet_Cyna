@@ -8,17 +8,17 @@
 
   tasks:
 
-    - name: Créer les VLANs 10, 20, 30, 40 avec noms
-      cisco.ios.ios_vlans:
-        config:
-          - vlan_id: 10
-            name: admin_reseau
-          - vlan_id: 20
-            name: utilisateurs
-          - vlan_id: 30
-            name: clients-leger
-          - vlan_id: 40
-            name: serveurs
+    - name: Créer les VLANs
+      vars:
+        vlan_lines: |
+          {% set l = [] %}
+          {% for vlan in vlans %}
+          {%   set _ = l.append('vlan ' ~ vlan.id) %}
+          {%   set _ = l.append(' name ' ~ vlan.name) %}
+          {% endfor %}
+          {{ l }}
+      ios_config:
+        lines: "{{ vlan_lines }}"
 
     - name: Configurer les interfaces trunk (si définies)
       cisco.ios.ios_config:

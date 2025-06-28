@@ -7,3 +7,16 @@ ansible_become_method: enable
 ansible_become_password: cyna-bsi2025
 ansible_network_os: ios
 ansible_connection: network_cli
+
+# SNMP Host
+snmp_host: 192.168.40.14
+snmp_community_ro: cynasnmp
+snmp_community_rw: cynasnmp
+
+# Déclaration VLANS + mode trunk
+trunk_vlans: "10,20,30,40"
+vlans:
+      - { id: 10, name: "Admin_Reseau" }
+      - { id: 20, name: "Utilisateurs" }
+      - { id: 30, name: "Clients-leger" }
+      - { id: 40, name: "Serveurs" }

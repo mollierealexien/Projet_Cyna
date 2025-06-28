@@ -1,6 +1,6 @@
 ---
 - name: Activer SNMP sur les switches de distribution
-  hosts: geneve-distrib
+  hosts: geneve-distrib:paris-distrib
   gather_facts: no
   connection: network_cli
   vars:
