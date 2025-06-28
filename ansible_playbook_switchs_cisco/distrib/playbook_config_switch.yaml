@@ -34,25 +34,25 @@
       set_fact:
         vlan10_ports: "{{ vlan10_ports | default([]) + [ item ] }}"
       when: item.access.vlan == 10
-      loop: "{{ vlan_ports | default([]) }}"
+      loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 10) | list }}"
 
     - name: Générer les ports pour le VLAN 20
       set_fact:
         vlan20_ports: "{{ vlan20_ports | default([]) + [ item ] }}"
       when: item.access.vlan == 20
-      loop: "{{ vlan_ports | default([]) }}"
+      loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 20) | list }}"
 
     - name: Générer les ports pour le VLAN 30
       set_fact:
         vlan30_ports: "{{ vlan30_ports | default([]) + [ item ] }}"
       when: item.access.vlan == 30
-      loop: "{{ vlan_ports | default([]) }}"
+      loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 30) | list }}"
 
     - name: Générer les ports pour le VLAN 40
       set_fact:
         vlan40_ports: "{{ vlan40_ports | default([]) + [ item ] }}"
       when: item.access.vlan == 40
-      loop: "{{ vlan_ports | default([]) }}"
+      loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 40) | list }}"
 
     - name: Configurer les interfaces access VLAN 10
       cisco.ios.ios_l2_interfaces:
