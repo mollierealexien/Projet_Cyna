@@ -20,3 +20,8 @@ vlans:
       - { id: 20, name: "Utilisateurs" }
       - { id: 30, name: "Clients-leger" }
       - { id: 40, name: "Serveurs" }
+
+# ACL SSH - Hôtes autorisés
+ssh_acl_hosts:
+  - 192.168.40.14 0.0.0.0
+  - 192.168.10.0 0.0.0.255

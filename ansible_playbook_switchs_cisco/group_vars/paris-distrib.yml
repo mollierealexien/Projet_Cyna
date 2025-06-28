@@ -1,0 +1,8 @@
+---
+# Gateway par défaut
+default_gateway: 192.168.140.1
+
+# TRUNK
+trunk_ports:
+  - GigabitEthernet0/0
+  - GigabitEthernet0/1
