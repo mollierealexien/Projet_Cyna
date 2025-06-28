@@ -1,6 +1,6 @@
 ---
-- name: Renforcer la sécurité du switch Cisco
-  hosts: SWITCHES
+- name: Renforcer la sécurité des switches Core
+  hosts: geneve-core:paris-core
   gather_facts: no
   connection: network_cli
   vars:
@@ -17,11 +17,11 @@
       cisco.ios.ios_config:
         lines:
           - ip access-list standard ACL-SSH
-          - permit 192.168.40.14 0.0.0.0
+          - permit 192.168.40.21 0.0.0.0
           - permit 192.168.10.0 0.0.0.255
           - deny any
 
-    - name: Appliquer l'ACL sur les lignes VTY pour sécuriser l'accès SSH
+    - name: Appliquer l'ACL sur les lignes VTY
       cisco.ios.ios_config:
         lines:
           - access-class ACL-SSH in
@@ -33,7 +33,7 @@
           - no ip http server
           - no ip http secure-server
 
-    - name: Définir la gateway par défaut pour joindre le VLAN 10 via 192.168.40.1
+    - name: Définir la gateway par défaut pour joindre le VLAN 10
       cisco.ios.ios_config:
         lines:
           - ip default-gateway 192.168.40.1

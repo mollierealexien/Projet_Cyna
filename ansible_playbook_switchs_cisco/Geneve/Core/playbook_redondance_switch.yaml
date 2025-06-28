@@ -1,0 +1,101 @@
+---
+- name: Configurer les switches Core pour LACP avec pfSense, Trunks et STP
+  hosts: geneve-core
+  gather_facts: no
+  connection: network_cli
+  vars:
+    ansible_network_os: cisco.ios.ios
+    trunk_vlans: "10,20,30,40"
+    vlans:
+      - { id: 10, name: "Admin_Reseau" }
+      - { id: 20, name: "Utilisateurs" }
+      - { id: 30, name: "Clients-leger" }
+      - { id: 40, name: "Serveurs" }
+
+  tasks:
+
+    - name: Créer les VLANs
+      vars:
+        vlan_lines: |
+          {% set l = [] %}
+          {% for vlan in vlans %}
+          {%   set _ = l.append('vlan ' ~ vlan.id) %}
+          {%   set _ = l.append(' name ' ~ vlan.name) %}
+          {% endfor %}
+          {{ l }}
+      ios_config:
+        lines: "{{ vlan_lines }}"
+
+    - name: Configurer le port trunk vers pfSense
+      ios_config:
+        parents:
+          - interface {{ pfSense_interface }}
+        lines:
+          - description Trunk vers pfSense
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan {{ trunk_vlans }}
+          - no shutdown
+
+    - name: Pause pour laisser monter l’interface pfSense
+      pause:
+        seconds: 5
+
+    - name: Appliquer le channel-group (LACP)
+      ios_config:
+        parents:
+          - interface {{ pfSense_interface }}
+        lines:
+          - channel-group {{ etherchannel_id }} mode active
+
+    - name: Configurer l’EtherChannel
+      ios_config:
+        parents:
+          - interface Port-channel{{ etherchannel_id }}
+        lines:
+          - description Aggregated trunk to pfSense
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan {{ trunk_vlans }}
+          - no shutdown
+
+    - name: Configurer le lien inter-switch Core
+      ios_config:
+        parents:
+          - interface {{ intercore_link }}
+        lines:
+          - description Trunk vers autre switch coeur
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan {{ trunk_vlans }}
+          - no shutdown
+
+    - name: Configurer le mode STP
+      ios_config:
+        lines:
+          - spanning-tree mode pvst
+
+    - name: Configurer priorité VLAN 10
+      ios_config:
+        lines:
+          - spanning-tree vlan 10 priority {{ spanning_priority }}
+
+    - name: Configurer priorité VLAN 20
+      ios_config:
+        lines:
+          - spanning-tree vlan 20 priority {{ spanning_priority }}
+
+    - name: Configurer priorité VLAN 40
+      ios_config:
+        lines:
+          - spanning-tree vlan 40 priority {{ spanning_priority }}
+
+    - name: Configurer les trunks vers les switches de distribution
+      ios_config:
+        parents: "interface range {{ distribution_trunks | join(',') }}"
+        lines:
+          - description Trunks vers switches de distribution
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan {{ trunk_vlans }}
+          - no shutdown

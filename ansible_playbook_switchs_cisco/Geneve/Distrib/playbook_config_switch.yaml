@@ -1,0 +1,51 @@
+---
+- name: Configuration complète du switch Cisco
+  hosts: geneve-distrib:paris-distrib
+  gather_facts: no
+  connection: network_cli
+  vars:
+    ansible_network_os: cisco.ios.ios
+
+  tasks:
+
+    - name: Créer les VLANs 10, 20, 30, 40 avec noms
+      cisco.ios.ios_vlans:
+        config:
+          - vlan_id: 10
+            name: admin_reseau
+          - vlan_id: 20
+            name: utilisateurs
+          - vlan_id: 30
+            name: clients-leger
+          - vlan_id: 40
+            name: serveurs
+
+    - name: Configurer les interfaces trunk (si définies)
+      cisco.ios.ios_config:
+        lines:
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,20,30,40
+        parents: "interface {{ item }}"
+      loop: "{{ trunk_ports | default([]) }}"
+      when: trunk_ports is defined
+
+    - name: Configurer les interfaces access VLAN 10 (si définies)
+      cisco.ios.ios_l2_interfaces:
+        config: "{{ vlan10_ports }}"
+      when: vlan10_ports is defined
+
+    - name: Configurer les interfaces access VLAN 20 (si définies)
+      cisco.ios.ios_l2_interfaces:
+        config: "{{ vlan20_ports }}"
+      when: vlan20_ports is defined
+
+    - name: Configurer les interfaces access VLAN 30 (si définies)
+      cisco.ios.ios_l2_interfaces:
+        config: "{{ vlan30_ports }}"
+      when: vlan30_ports is defined
+
+    - name: Configurer les interfaces access VLAN 40 (si définies)
+      cisco.ios.ios_l2_interfaces:
+        config: "{{ vlan40_ports }}"
+      when: vlan40_ports is defined

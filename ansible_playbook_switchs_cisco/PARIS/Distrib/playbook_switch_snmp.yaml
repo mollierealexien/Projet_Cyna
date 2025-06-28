@@ -1,6 +1,6 @@
 ---
 - name: Activer SNMP sur les switches Cisco
-  hosts: SWITCHES
+  hosts: paris-distrib
   gather_facts: no
   connection: network_cli
   vars:

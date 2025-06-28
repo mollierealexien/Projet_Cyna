@@ -1,0 +1,49 @@
+# Variables spécifiques à l'hôte SW3-GVA-DISTRIB
+---
+ansible_host: 192.168.40.240
+# Ajoutez ici les variables spécifiques à cet hôte
+
+# VLAN 10
+
+vlan10_ports:
+  - { name: "GigabitEthernet3/2", mode: access, access: { vlan: 10 } }
+
+# VLAN 20
+
+vlan20_ports:
+  - { name: "GigabitEthernet0/2", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet0/3", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet1/0", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet1/1", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet1/2", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet1/3", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet2/0", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet2/1", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet2/2", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet2/3", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet3/0", mode: access, access: { vlan: 20 } }
+  - { name: "GigabitEthernet3/1", mode: access, access: { vlan: 20 } }
+
+# VLAN 40
+
+vlan40_ports:
+  - { name: "GigabitEthernet3/3", mode: access, access: { vlan: 40 } }
+
+# TRUNK
+
+trunk_ports:
+  - GigabitEthernet0/0
+  - GigabitEthernet0/1
+
+# ACL SSH - Hôtes autorisés
+ssh_acl_hosts:
+  - 192.168.40.14 0.0.0.0
+  - 192.168.10.0 0.0.0.255
+
+# Gateway par défaut
+default_gateway: 192.168.40.1
+
+# SNMP Host
+snmp_host: 192.168.40.14
+snmp_community_ro: cynasnmp
+snmp_community_rw: cynasnmp

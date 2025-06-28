@@ -1,6 +1,6 @@
 ---
 - name: Configurer les switches SW1 et SW2 pour LACP avec pfSense
-  hosts: SWITCHES
+  hosts: paris-core
   gather_facts: no
   vars:
     vlans:

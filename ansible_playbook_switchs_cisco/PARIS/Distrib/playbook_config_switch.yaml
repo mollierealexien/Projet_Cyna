@@ -1,6 +1,6 @@
 ---
 - name: Configuration complète du switch Cisco
-  hosts: SWITCHES
+  hosts: paris-distrib
   gather_facts: no
   connection: network_cli
   vars:

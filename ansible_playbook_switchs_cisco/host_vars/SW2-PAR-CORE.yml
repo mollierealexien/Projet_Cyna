@@ -1,0 +1,27 @@
+# Variables spécifiques à l'hôte SW2-PAR-CORE
+---
+ansible_host: 192.168.140.231
+# Ajoutez ici les variables spécifiques à cet hôte
+
+# Interface vers pfSense
+pfSense_interface: GigabitEthernet0/0
+
+# Lien inter-switch Core
+intercore_link: GigabitEthernet3/3
+
+# Trunks vers les switches de distribution
+distribution_trunks:
+  - GigabitEthernet1/0
+  - GigabitEthernet1/1
+  - GigabitEthernet1/2
+  - GigabitEthernet1/3
+  - GigabitEthernet2/0
+  - GigabitEthernet2/1
+  - GigabitEthernet2/2
+  - GigabitEthernet2/3
+
+# ID EtherChannel pour pfSense
+etherchannel_id: 2
+
+# Priorité STP
+spanning_priority: 8192

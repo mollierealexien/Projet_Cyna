@@ -1,6 +1,6 @@
 ---
-- name: Activer SNMP sur les switches Cisco
-  hosts: SWITCHES
+- name: Activer SNMP sur les switches Core
+  hosts: geneve-core:paris-core
   gather_facts: no
   connection: network_cli
   vars:
