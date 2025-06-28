@@ -1,5 +1,6 @@
 ---
 - name: Renforcer la sécurité des switches de distribution
+
   hosts: geneve-distrib:paris-distrib
   gather_facts: no
   connection: network_cli
