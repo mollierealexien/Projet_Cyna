@@ -1,0 +1,67 @@
+---
+- name: Configuration complète du switch Cisco
+  hosts: SWITCHES
+  gather_facts: no
+  connection: network_cli
+  vars:
+    ansible_network_os: cisco.ios.ios
+
+  tasks:
+
+    - name: Créer les VLANs 10, 20, 30, 40 avec noms
+      cisco.ios.ios_vlans:
+        config:
+          - vlan_id: 10
+            name: admin_reseau
+          - vlan_id: 20
+            name: utilisateurs
+          - vlan_id: 30
+            name: clients-leger
+          - vlan_id: 40
+            name: serveurs
+
+    - name: Configurer Gi0/0 et Gi0/1 en trunk
+      cisco.ios.ios_config:
+        lines:
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,20,30,40
+        parents: "interface {{ item }}"
+      loop:
+        - GigabitEthernet0/0
+        - GigabitEthernet0/1
+
+    - name: Configurer Gi3/2 en access VLAN 10
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet3/2
+            mode: access
+            access:
+              vlan: 10
+
+    - name: Générer la liste des interfaces access VLAN 20
+      set_fact:
+        vlan20_ports:
+          - { name: "GigabitEthernet0/2", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet0/3", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet1/0", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet1/1", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet1/2", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet1/3", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet2/0", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet2/1", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet2/2", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet2/3", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet3/0", mode: access, access: { vlan: 20 } }
+          - { name: "GigabitEthernet3/1", mode: access, access: { vlan: 20 } }
+    - name: Configurer Gi0/2 à Gi3/1 en access VLAN 20
+      cisco.ios.ios_l2_interfaces:
+        config: "{{ vlan20_ports }}"
+
+    - name: Configurer Gi3/3 en access VLAN 40
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet3/3
+            mode: access
+            access:
+              vlan: 40
