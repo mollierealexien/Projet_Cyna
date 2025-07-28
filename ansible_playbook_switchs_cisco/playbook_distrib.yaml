@@ -1,0 +1,7 @@
+---
+- name: Configuration complète des switches Distribution
+  hosts: geneve-distrib:paris-distrib
+  gather_facts: no
+  connection: network_cli
+  roles:
+    - distrib_switch

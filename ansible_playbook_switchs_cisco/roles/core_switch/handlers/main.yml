@@ -1,0 +1,5 @@
+---
+# Handlers pour le rôle core_switch
+- name: save config
+  ios_config:
+    save_when: always

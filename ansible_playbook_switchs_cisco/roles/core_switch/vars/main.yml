@@ -1,0 +1,6 @@
+---
+# Variables par défaut pour le rôle core_switch
+ansible_server_ip: "192.168.40.14"
+snmp_ro: "cynasnmp"
+snmp_rw: "cynasnmp"
+snmp_host: "192.168.40.14"

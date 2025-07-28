@@ -1,0 +1,7 @@
+---
+- name: Configuration complète des switches Core
+  hosts: geneve-core:paris-core
+  gather_facts: no
+  connection: network_cli
+  roles:
+    - core_switch
