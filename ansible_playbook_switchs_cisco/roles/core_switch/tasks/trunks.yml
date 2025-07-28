@@ -1,0 +1,30 @@
+---
+# tasks file for core_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Core Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Core
+
+# Trunks et LACP pour core_switch
+- name: Configurer le port trunk vers pfSense
+  ios_config:
+    parents:
+      - interface {{ pfSense_interface }}
+    lines:
+      - description Trunk vers pfSense
+      - switchport trunk encapsulation dot1q
+      - switchport mode trunk
+      - switchport trunk allowed vlan {{ trunk_vlans }}
+      - no shutdown
+  when: pfSense_interface is defined
+
+- name: Pause pour laisser monter l’interface pfSense
+  pause:
+    seconds: 5
+  when: pfSense_interface is defined
+
+- name: Appliquer le channel-group (LACP)
+  ios_config:
+    parents:
+      - interface {{ lacp_interface }}
+    lines:
+      - channel-group {{ lacp_group }} mode active
+  when: lacp_interface is defined and lacp_group is defined

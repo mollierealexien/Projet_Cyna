@@ -1,77 +1,9 @@
 ---
+# Ansible Playbook pour la configuration des switches Core Cisco
+# Ce playbook inclut les rôles et les tâches nécessaires pour configurer les switches Core
 # Tâches principales du rôle core_switch
-- name: Créer les VLANs
-  ios_config:
-    lines: "{{ vlan_lines }}"
-  when: vlans is defined
-
-- name: Configurer le port trunk vers pfSense
-  ios_config:
-    parents:
-      - interface {{ pfSense_interface }}
-    lines:
-      - description Trunk vers pfSense
-      - switchport trunk encapsulation dot1q
-      - switchport mode trunk
-      - switchport trunk allowed vlan {{ trunk_vlans }}
-      - no shutdown
-  when: pfSense_interface is defined
-
-- name: Pause pour laisser monter l’interface pfSense
-  pause:
-    seconds: 5
-  when: pfSense_interface is defined
-
-- name: Appliquer le channel-group (LACP)
-  ios_config:
-    parents:
-      - interface {{ lacp_interface }}
-    lines:
-      - channel-group {{ lacp_group }} mode active
-  when: lacp_interface is defined and lacp_group is defined
-
-- name: Activer le chiffrement des mots de passe
-  ios_config:
-    lines:
-      - service password-encryption
-
-- name: Créer l'ACL pour autoriser le SSH
-  ios_config:
-    lines:
-      - ip access-list standard ACL-SSH
-      - permit {{ ansible_server_ip }} 0.0.0.0
-      - permit {{ ssh_vlan_subnet }}
-      - deny any
-
-- name: Appliquer l'ACL sur les lignes VTY
-  ios_config:
-    lines:
-      - access-class ACL-SSH in
-    parents: line vty 0 15
-
-- name: Désactiver les serveurs HTTP et HTTPS
-  ios_config:
-    lines:
-      - no ip http server
-      - no ip http secure-server
-
-- name: Définir la gateway par défaut
-  ios_config:
-    lines:
-      - ip default-gateway {{ default_gateway }}
-  when: default_gateway is defined
-
-- name: Configurer SNMP v2c
-  ios_config:
-    lines:
-      - snmp-server community {{ snmp_ro }} RO
-      - snmp-server community {{ snmp_rw }} RW
-      - snmp-server host {{ snmp_host }} {{ snmp_ro }}
-      - snmp-server enable traps
-  when: snmp_ro is defined and snmp_rw is defined and snmp_host is defined
-
-# Handler pour sauvegarder la configuration
-- name: Sauvegarder la configuration
-  ios_config:
-    save_when: always
-  notify: save config
+- include_tasks: vlans.yml
+- include_tasks: trunks.yml
+- include_tasks: securite.yml
+- include_tasks: snmp.yml
+- include_tasks: save.yml

@@ -1,0 +1,10 @@
+---
+# tasks file for core_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Core Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Core
+
+# Sauvegarde de la configuration pour core_switch
+- name: Sauvegarder la configuration
+  ios_config:
+    save_when: always
+  notify: save config

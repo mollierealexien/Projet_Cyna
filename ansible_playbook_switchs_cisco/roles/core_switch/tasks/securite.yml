@@ -1,0 +1,36 @@
+---
+# tasks file for core_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Core Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Core
+
+# Sécurité pour core_switch
+- name: Activer le chiffrement des mots de passe
+  ios_config:
+    lines:
+      - service password-encryption
+
+- name: Créer l'ACL pour autoriser le SSH
+  ios_config:
+    lines:
+      - ip access-list standard ACL-SSH
+      - permit {{ ansible_server_ip }} 0.0.0.0
+      - permit {{ ssh_vlan_subnet }}
+      - deny any
+
+- name: Appliquer l'ACL sur les lignes VTY
+  ios_config:
+    lines:
+      - access-class ACL-SSH in
+    parents: line vty 0 15
+
+- name: Désactiver les serveurs HTTP et HTTPS
+  ios_config:
+    lines:
+      - no ip http server
+      - no ip http secure-server
+
+- name: Définir la gateway par défaut
+  ios_config:
+    lines:
+      - ip default-gateway {{ default_gateway }}
+  when: default_gateway is defined

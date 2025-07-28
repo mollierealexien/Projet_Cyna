@@ -3,9 +3,8 @@
 # Ce fichier inclut les tâches nécessaires pour configurer les switches Distribution Cisco
 # Il est inclus dans le playbook principal pour la configuration des switches Distribution
 
-# Tâches principales du rôle distrib_switch
-- include_tasks: vlans.yml
-- include_tasks: trunks.yml
-- include_tasks: securite.yml
-- include_tasks: snmp.yml
-- include_tasks: save.yml
+# Sauvegarde de la configuration pour distrib_switch
+- name: Sauvegarder la configuration
+  ios_config:
+    save_when: always
+  notify: save config

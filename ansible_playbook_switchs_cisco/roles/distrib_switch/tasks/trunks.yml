@@ -1,0 +1,15 @@
+---
+# tasks file for distrib_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Distribution Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Distribution
+
+# Tâches principales du rôle distrib_switch
+- name: Configurer les interfaces trunk (si définies)
+  cisco.ios.ios_config:
+    lines:
+      - switchport trunk encapsulation dot1q
+      - switchport mode trunk
+      - switchport trunk allowed vlan {{trunk_vlans}}
+    parents: "interface {{ item }}"
+  loop: "{{ trunk_ports | default([]) }}"
+  when: trunk_ports is defined

@@ -1,0 +1,14 @@
+---
+# tasks file for distrib_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Distribution Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Distribution
+
+# SNMP pour distrib_switch
+- name: Configurer SNMP v2c
+  ios_config:
+    lines:
+      - snmp-server community {{ snmp_ro }} RO
+      - snmp-server community {{ snmp_rw }} RW
+      - snmp-server host {{ snmp_host }} {{ snmp_ro }}
+      - snmp-server enable traps
+  when: snmp_ro is defined and snmp_rw is defined and snmp_host is defined

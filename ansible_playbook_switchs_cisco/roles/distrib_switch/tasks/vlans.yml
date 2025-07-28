@@ -1,0 +1,62 @@
+---
+# tasks file for distrib_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Distribution Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Distribution
+
+# Tâches pour la configuration des VLANs
+- name: Créer les VLANs
+  vars:
+    vlan_lines: |
+      {% set l = [] %}
+      {% for vlan in vlans %}
+      {%   set _ = l.append('vlan ' ~ vlan.id) %}
+      {%   set _ = l.append(' name ' ~ vlan.name) %}
+      {% endfor %}
+      {{ l }}
+  ios_config:
+    lines: "{{ vlan_lines }}"
+  when: vlans is defined
+
+- name: Générer les ports pour le VLAN 10
+  set_fact:
+    vlan10_ports: "{{ vlan10_ports | default([]) + [ item ] }}"
+  when: item.access.vlan == 10
+  loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 10) | list }}"
+
+- name: Générer les ports pour le VLAN 20
+  set_fact:
+    vlan20_ports: "{{ vlan20_ports | default([]) + [ item ] }}"
+  when: item.access.vlan == 20
+  loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 20) | list }}"
+
+- name: Générer les ports pour le VLAN 30
+  set_fact:
+    vlan30_ports: "{{ vlan30_ports | default([]) + [ item ] }}"
+  when: item.access.vlan == 30
+  loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 30) | list }}"
+
+- name: Générer les ports pour le VLAN 40
+  set_fact:
+    vlan40_ports: "{{ vlan40_ports | default([]) + [ item ] }}"
+  when: item.access.vlan == 40
+  loop: "{{ vlan_ports | default([]) | selectattr('access.vlan', 'equalto', 40) | list }}"
+
+- name: Configurer les interfaces access VLAN 10
+  cisco.ios.ios_l2_interfaces:
+    config: "{{ vlan10_ports }}"
+  when: vlan10_ports is defined
+
+- name: Configurer les interfaces access VLAN 20
+  cisco.ios.ios_l2_interfaces:
+    config: "{{ vlan20_ports }}"
+  when: vlan20_ports is defined
+
+- name: Configurer les interfaces access VLAN 30
+  cisco.ios.ios_l2_interfaces:
+    config: "{{ vlan30_ports }}"
+  when: vlan30_ports is defined
+
+- name: Configurer les interfaces access VLAN 40
+  cisco.ios.ios_l2_interfaces:
+    config: "{{ vlan40_ports }}"
+  when: vlan40_ports is defined

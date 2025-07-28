@@ -1,0 +1,18 @@
+---
+# tasks file for core_switch
+# Ce fichier inclut les tâches nécessaires pour configurer les switches Core Cisco
+# Il est inclus dans le playbook principal pour la configuration des switches Core
+
+# VLANs et interfaces access pour core_switch
+- name: Créer les VLANs
+  vars:
+    vlan_lines: |
+      {% set l = [] %}
+      {% for vlan in vlans %}
+      {%   set _ = l.append('vlan ' ~ vlan.id) %}
+      {%   set _ = l.append(' name ' ~ vlan.name) %}
+      {% endfor %}
+      {{ l }}
+  ios_config:
+    lines: "{{ vlan_lines }}"
+  when: vlans is defined
